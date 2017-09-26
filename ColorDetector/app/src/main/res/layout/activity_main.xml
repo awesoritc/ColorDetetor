@@ -41,6 +41,13 @@
         android:layout_height="wrap_content"
         android:text="start" />
 
+    <Button
+        android:id="@+id/setting_btn"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="設定を変更する"
+        android:visibility="visible"/>
+
     <ScrollView
         android:id="@+id/scrollView"
         android:layout_width="match_parent"

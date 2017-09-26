@@ -3,6 +3,7 @@ package com.cashierapp.colordetector;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Color;
@@ -12,6 +13,8 @@ import android.os.Handler;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.MotionEvent;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
@@ -31,8 +34,12 @@ public class MainActivity extends AppCompatActivity {
 
     private final String TAG = "MainActivity";
 
+    //TODO:設定から戻ってきた時のcameraのエラーを削除
+    //Camera is being used after Camera.release() was called
 
 
+
+    /*
 
         //TODO:各設定値を指定
 
@@ -54,11 +61,23 @@ public class MainActivity extends AppCompatActivity {
     private final int y_pos = 100;
 
     //TODO:モード切り替え(5箇所の色の多い結果を使う場合はtrue, 1箇所の色を使うならfalse)
-    //角の4箇所と真ん中の色を取得し、多い方の色を記録
+    //(5箇所)角の4箇所と真ん中の色を取得し、多い方の色を記録
+    //(1箇所)上の設定値の位置の色を取得
     //白黒判定は上で指定した境界値に従う
-    private final boolean useAllPic = true;
+    private final boolean use5points = false;
 
+    //TODO:時間のフォーマットを指定
+    private final String format = "yyyy/MM/dd HH:mm:ss.SSS";
 
+    */
+
+    private String filename;
+    private int border;
+    private int interval;
+    private int x_pos;
+    private int y_pos;
+    private boolean use5points;
+    private String format;
 
 
 
@@ -74,7 +93,7 @@ public class MainActivity extends AppCompatActivity {
 
     Handler mHandler;
     private boolean isRunning = false;
-    private Button delete_btn, display_file_btn;
+    private Button delete_btn, display_file_btn, setting_btn;
     private ScrollView scroll;
     FrameLayout preview;
 
@@ -84,20 +103,24 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+
         palette = (TextView) findViewById(R.id.color);
         result = (TextView) findViewById(R.id.result);
         recent_data = (TextView) findViewById(R.id.recent_data);
         scroll = (ScrollView) findViewById(R.id.scrollView);
+        preview = (FrameLayout)findViewById(R.id.preview);
+
+        setValues();
 
         final Button btn = (Button) findViewById(R.id.start_btn);
         btn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 if(isRunning){
-                    if (mCam != null) {
+                    /*if (mCam != null) {
                         mCam.release();
                         mCam = null;
-                    }
+                    }*/
 
                     if(mHandler != null){
                         mHandler.removeCallbacksAndMessages(null);
@@ -121,6 +144,7 @@ public class MainActivity extends AppCompatActivity {
                     recent_data.setVisibility(View.GONE);
                     display_file_btn.setVisibility(View.VISIBLE);
                     preview.setVisibility(View.GONE);
+                    setting_btn.setVisibility(View.VISIBLE);
                 }else{
 
                     try {
@@ -151,6 +175,7 @@ public class MainActivity extends AppCompatActivity {
                     recent_data.setVisibility(View.VISIBLE);
                     scroll.setVisibility(View.GONE);
                     display_file_btn.setVisibility(View.GONE);
+                    setting_btn.setVisibility(View.GONE);
                 }
             }
         });
@@ -188,6 +213,16 @@ public class MainActivity extends AppCompatActivity {
         });
 
 
+        setting_btn = (Button) findViewById(R.id.setting_btn);
+        setting_btn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent intent = new Intent(MainActivity.this, SettingActivity.class);
+                startActivityForResult(intent, 0);
+            }
+        });
+
+
         // カメラインスタンスの取得
         /*try {
             mCam = Camera.open();
@@ -199,6 +234,18 @@ public class MainActivity extends AppCompatActivity {
         FrameLayout preview = (FrameLayout)findViewById(R.id.image);
         mCamPreview = new CameraPreview(this, mCam);
         preview.addView(mCamPreview);*/
+    }
+
+    public void initializeCamera(){
+        try {
+            mCam = Camera.open();
+        }catch (Exception e){
+            e.printStackTrace();
+        }
+
+        mCamPreview = new CameraPreview(this, mCam);
+
+        preview.addView(mCamPreview);
     }
 
 
@@ -221,7 +268,7 @@ public class MainActivity extends AppCompatActivity {
 
             String tmp = "";
             int selected_color = 0;
-            if(useAllPic){
+            if(use5points){
                 //5箇所をとるパターン
                 int[] points_width = {100, 100, 2460, 2460, 1230};
                 int[] points_height = {100, 1820, 100, 1820, 960};
@@ -237,14 +284,14 @@ public class MainActivity extends AppCompatActivity {
 
                 }
                 if(black_counter > 3){
-                    tmp = "0," + Util.getTimeStamp();
+                    tmp = "0," + Util.getTimeStamp(format);
                 }else{
-                    tmp = "255," + Util.getTimeStamp();
+                    tmp = "255," + Util.getTimeStamp(format);
                 }
             }else{
                 //右上の１箇所だけのパターン
                 int[] rgb = Util.getPixelGBR(pic, x_pos, y_pos);
-                tmp = Util.colorChecker(rgb[0], rgb[1], rgb[2], border) + "," + Util.getTimeStamp();
+                tmp = Util.colorChecker(rgb[0], rgb[1], rgb[2], border) + "," + Util.getTimeStamp(format);
                 selected_color = rgb[3];
             }
 
@@ -270,6 +317,7 @@ public class MainActivity extends AppCompatActivity {
     };
 
 
+
     @Override
     protected void onPause() {
         super.onPause();
@@ -285,6 +333,30 @@ public class MainActivity extends AppCompatActivity {
 
         isRunning = false;
 
+    }
+
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+
+        //変更した設定値を読み込み
+        setValues();
+
+        delete_btn.setVisibility(View.GONE);
+    }
+
+
+    public void setValues(){
+        SharedPreferences preferences = getSharedPreferences("setting", MODE_PRIVATE);
+        filename = preferences.getString("filename_input", "filename");
+        border = preferences.getInt("border_input", 100);
+        interval = preferences.getInt("interval_input", 1000);
+        x_pos = preferences.getInt("x_pos_input", 100);
+        y_pos = preferences.getInt("y_pos_input", 100);
+        format = preferences.getString("format_input", "yyyy/MM/dd HH:mm:ss.SSS");
+
+        use5points = preferences.getBoolean("use5points_input", false);
     }
 
 }
@@ -335,4 +407,7 @@ class CameraPreview extends SurfaceView implements SurfaceHolder.Callback {
         // 画面回転に対応する場合は、ここでプレビューを停止し、
         // 回転による処理を実施、再度プレビューを開始する。
     }
+
+
+
 }

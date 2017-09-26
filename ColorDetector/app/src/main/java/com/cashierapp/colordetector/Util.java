@@ -27,10 +27,10 @@ import java.util.Locale;
 
 public class Util {
 
-    public static String getTimeStamp(){
+    public static String getTimeStamp(String format){
 
         Date date = new Date();
-        SimpleDateFormat sdf = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss.SSS", Locale.JAPAN);
+        SimpleDateFormat sdf = new SimpleDateFormat(format, Locale.JAPAN);
         return sdf.format(date);
 
     }
@@ -80,7 +80,7 @@ public class Util {
             reader = new BufferedReader(new InputStreamReader(context.openFileInput(filename)));
             String line;
             int i = 0;
-            while((line = reader.readLine()) != null || i < 200){
+            while((line = reader.readLine()) != null && i < 1000){
                 builder.append(line);
                 builder.append(System.getProperty("line.separator"));
                 i++;
