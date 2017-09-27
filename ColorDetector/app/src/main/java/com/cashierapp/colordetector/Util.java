@@ -64,10 +64,12 @@ public class Util {
                 outputStream.write(msg.getBytes());
                 outputStream.close();
             } catch (IOException e) {
+                e.printStackTrace();
             }
 
         } else if (Environment.MEDIA_MOUNTED_READ_ONLY.equals(state)) { //読み取りのみか（書き込み不可）
 
+            Toast.makeText(context, "書き込み不可", Toast.LENGTH_SHORT).show();
         }
         /*} catch (FileNotFoundException e) {
             e.printStackTrace();
@@ -77,7 +79,28 @@ public class Util {
     }
 
 
-    public static String readFile(Context context, String filename){
+
+    public static boolean isExternalStorageWritable() {
+        String state = Environment.getExternalStorageState();
+        if (Environment.MEDIA_MOUNTED.equals(state)) {
+            return true;
+        }
+        return false;
+    }
+
+    /* Checks if external storage is available to at least read */
+    public static boolean isExternalStorageReadable() {
+        String state = Environment.getExternalStorageState();
+        if (Environment.MEDIA_MOUNTED.equals(state) ||
+                Environment.MEDIA_MOUNTED_READ_ONLY.equals(state)) {
+            return true;
+        }
+        return false;
+    }
+
+
+
+    /*public static String readFile(Context context, String filename){
         StringBuilder builder = new StringBuilder();
         BufferedReader reader = null;
 
@@ -108,7 +131,7 @@ public class Util {
         Log.d("readFile", "6");
 
         return builder.toString();
-    }
+    }*/
 
 
     public static int[] getPixelGBR(Bitmap bitmap, int x, int y){
@@ -123,7 +146,7 @@ public class Util {
 
     public static int colorChecker(int red, int green, int blue, int border){
 
-        //TODO:黒と城の境界を調整
+        //TODO:黒と白の境界を調整
         if(red < border && green < border && blue < border){
             //黒と判定
             return 0;
@@ -133,21 +156,5 @@ public class Util {
         }
     }
 
-    public static boolean isExternalStorageWritable() {
-        String state = Environment.getExternalStorageState();
-        if (Environment.MEDIA_MOUNTED.equals(state)) {
-            return true;
-        }
-        return false;
-    }
 
-    /* Checks if external storage is available to at least read */
-    public static boolean isExternalStorageReadable() {
-        String state = Environment.getExternalStorageState();
-        if (Environment.MEDIA_MOUNTED.equals(state) ||
-                Environment.MEDIA_MOUNTED_READ_ONLY.equals(state)) {
-            return true;
-        }
-        return false;
-    }
 }

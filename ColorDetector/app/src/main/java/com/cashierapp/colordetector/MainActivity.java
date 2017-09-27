@@ -13,6 +13,7 @@ import android.os.Handler;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
 import android.view.View;
@@ -79,7 +80,8 @@ public class MainActivity extends AppCompatActivity {
 
     public void setValues(){
         SharedPreferences preferences = getSharedPreferences("setting", MODE_PRIVATE);
-        filename = preferences.getString("filename_input", "filename.txt");
+        //filename = preferences.getString("filename_input", Util.getTimeStamp("yyyy/MM/dd HH:mm") + ".txt");
+        filename = Util.getTimeStamp("yyyy_MM_dd_HH_mm") + ".txt";
         border = preferences.getInt("border_input", 100);
         interval = preferences.getInt("interval_input", 1000);
         x_pos = preferences.getInt("x_pos_input", 100);
@@ -158,7 +160,7 @@ public class MainActivity extends AppCompatActivity {
                     recent_data.setVisibility(View.GONE);
                     //display_file_btn.setVisibility(View.VISIBLE);
                     preview.setVisibility(View.GONE);
-                    setting_btn.setVisibility(View.VISIBLE);
+                    //setting_btn.setVisibility(View.VISIBLE);
                 }else{
 
                     getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
@@ -322,6 +324,7 @@ public class MainActivity extends AppCompatActivity {
             //Toast.makeText(MainActivity.this, String.valueOf(pic.getWidth()) + "\n" + String.valueOf(pic.getHeight()), Toast.LENGTH_SHORT).show();
             //Toast.makeText(MainActivity.this, tmp, Toast.LENGTH_SHORT).show();
             recent_data.setText(tmp);
+            Log.d(TAG, filename);
             Util.writeMsg(MainActivity.this, tmp +"\n", filename);
             palette.setBackgroundColor(selected_color);
 
@@ -337,17 +340,20 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onPause() {
         super.onPause();
-        // カメラ破棄インスタンスを解放
-        if (mCam != null) {
-            mCam.release();
-            mCam = null;
-        }
 
         if(mHandler != null){
             mHandler.removeCallbacksAndMessages(null);
         }
 
         isRunning = false;
+
+
+        // カメラ破棄インスタンスを解放
+        if (mCam != null) {
+            mCam.release();
+            mCam = null;
+            finish();
+        }
 
     }
 

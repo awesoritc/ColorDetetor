@@ -23,7 +23,7 @@ public class SettingActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_setting);
 
-        filename_input = (EditText) findViewById(R.id.filename_input);
+        //filename_input = (EditText) findViewById(R.id.filename_input);
         border_input = (EditText) findViewById(R.id.border_input);
         interval_input = (EditText) findViewById(R.id.interval_input);
         x_pos_input = (EditText) findViewById(R.id.x_pos_input);
@@ -34,7 +34,7 @@ public class SettingActivity extends AppCompatActivity {
 
 
         final SharedPreferences preferences = getSharedPreferences("setting", MODE_PRIVATE);
-        filename_input.setText(preferences.getString("filename_input", "filename.txt"));
+        //filename_input.setText(preferences.getString("filename_input", "filename.txt"));
         border_input.setText(String.valueOf(preferences.getInt("border_input", 100)));
         interval_input.setText(String.valueOf(preferences.getInt("interval_input", 1000)));
         x_pos_input.setText(String.valueOf(preferences.getInt("x_pos_input", 100)));
@@ -53,7 +53,7 @@ public class SettingActivity extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 SharedPreferences.Editor editor = preferences.edit();
-                editor.putString("filename_input", filename_input.getText().toString());
+                //editor.putString("filename_input", filename_input.getText().toString());
                 editor.putInt("border_input", Integer.parseInt(border_input.getText().toString()));
                 editor.putInt("interval_input", Integer.parseInt(interval_input.getText().toString()));
                 editor.putInt("x_pos_input", Integer.parseInt(x_pos_input.getText().toString()));
