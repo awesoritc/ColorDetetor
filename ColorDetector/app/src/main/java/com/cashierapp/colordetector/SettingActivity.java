@@ -34,7 +34,7 @@ public class SettingActivity extends AppCompatActivity {
 
 
         final SharedPreferences preferences = getSharedPreferences("setting", MODE_PRIVATE);
-        filename_input.setText(preferences.getString("filename_input", "filename"));
+        filename_input.setText(preferences.getString("filename_input", "filename.txt"));
         border_input.setText(String.valueOf(preferences.getInt("border_input", 100)));
         interval_input.setText(String.valueOf(preferences.getInt("interval_input", 1000)));
         x_pos_input.setText(String.valueOf(preferences.getInt("x_pos_input", 100)));

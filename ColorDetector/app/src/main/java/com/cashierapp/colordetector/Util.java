@@ -3,6 +3,7 @@ package com.cashierapp.colordetector;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.Color;
+import android.os.Environment;
 import android.util.Log;
 import android.widget.Toast;
 
@@ -36,26 +37,8 @@ public class Util {
     }
 
 
-
-    public static void appendLog(Context context, String filename, String contents){
-
-        FileOutputStream out;
-        File file = new File(context.getFilesDir(), filename);
-
-        try{
-            out = context.openFileOutput(filename, Context.MODE_WORLD_READABLE);
-            out.write(contents.getBytes());
-            out.close();
-        } catch (FileNotFoundException e) {
-            e.printStackTrace();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-    }
-
-
     public static void writeMsg(Context context, String msg, String filename){
-        BufferedWriter bufferedWriter = null;
+        /*BufferedWriter bufferedWriter = null;
         OutputStream out;
 
         try{
@@ -63,12 +46,34 @@ public class Util {
             PrintWriter printWriter = new PrintWriter(new OutputStreamWriter(out, "UTF-8"));
             printWriter.append(msg);
             printWriter.close();
-            //Toast.makeText(context, "success", Toast.LENGTH_SHORT).show();
-        } catch (FileNotFoundException e) {
+            //Toast.makeText(context, "success", Toast.LENGTH_SHORT).show();*/
+
+        String state = Environment.getExternalStorageState();
+        if (Environment.MEDIA_MOUNTED.equals(state)) { //マウントされているか
+
+            String mydirName = "ColorData";
+            File myDir = new File(Environment.getExternalStorageDirectory(), mydirName);
+            if (!myDir.exists()) { //MyDirectoryというディレクトリーがなかったら作成
+                myDir.mkdirs();
+            }
+
+
+            File saveFile = new File(myDir, filename);
+            try {
+                FileOutputStream outputStream = new FileOutputStream(saveFile, true);
+                outputStream.write(msg.getBytes());
+                outputStream.close();
+            } catch (IOException e) {
+            }
+
+        } else if (Environment.MEDIA_MOUNTED_READ_ONLY.equals(state)) { //読み取りのみか（書き込み不可）
+
+        }
+        /*} catch (FileNotFoundException e) {
             e.printStackTrace();
         } catch (UnsupportedEncodingException e) {
             e.printStackTrace();
-        }
+        }*/
     }
 
 
@@ -126,5 +131,23 @@ public class Util {
             //白と判定
             return 255;
         }
+    }
+
+    public static boolean isExternalStorageWritable() {
+        String state = Environment.getExternalStorageState();
+        if (Environment.MEDIA_MOUNTED.equals(state)) {
+            return true;
+        }
+        return false;
+    }
+
+    /* Checks if external storage is available to at least read */
+    public static boolean isExternalStorageReadable() {
+        String state = Environment.getExternalStorageState();
+        if (Environment.MEDIA_MOUNTED.equals(state) ||
+                Environment.MEDIA_MOUNTED_READ_ONLY.equals(state)) {
+            return true;
+        }
+        return false;
     }
 }

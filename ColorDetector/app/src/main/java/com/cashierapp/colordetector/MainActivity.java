@@ -13,9 +13,6 @@ import android.os.Handler;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.view.Menu;
-import android.view.MenuItem;
-import android.view.MotionEvent;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
 import android.view.View;
@@ -81,7 +78,7 @@ public class MainActivity extends AppCompatActivity {
 
     public void setValues(){
         SharedPreferences preferences = getSharedPreferences("setting", MODE_PRIVATE);
-        filename = preferences.getString("filename_input", "filename");
+        filename = preferences.getString("filename_input", "filename.txt");
         border = preferences.getInt("border_input", 100);
         interval = preferences.getInt("interval_input", 1000);
         x_pos = preferences.getInt("x_pos_input", 100);
@@ -154,7 +151,7 @@ public class MainActivity extends AppCompatActivity {
                     builder.create().show();*/
                     //止まってる時のもの
                     recent_data.setVisibility(View.GONE);
-                    display_file_btn.setVisibility(View.VISIBLE);
+                    //display_file_btn.setVisibility(View.VISIBLE);
                     preview.setVisibility(View.GONE);
                     setting_btn.setVisibility(View.VISIBLE);
                 }else{
@@ -186,13 +183,13 @@ public class MainActivity extends AppCompatActivity {
                     delete_btn.setVisibility(View.GONE);
                     recent_data.setVisibility(View.VISIBLE);
                     scroll.setVisibility(View.GONE);
-                    display_file_btn.setVisibility(View.GONE);
+                    //display_file_btn.setVisibility(View.GONE);
                     setting_btn.setVisibility(View.GONE);
                 }
             }
         });
 
-        display_file_btn = (Button) findViewById(R.id.display_file_btn);
+        /*display_file_btn = (Button) findViewById(R.id.display_file_btn);
         display_file_btn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -201,7 +198,7 @@ public class MainActivity extends AppCompatActivity {
                 display_file_btn.setVisibility(View.GONE);
                 delete_btn.setVisibility(View.VISIBLE);
             }
-        });
+        });*/
 
 
         delete_btn = (Button) findViewById(R.id.delete_btn);
