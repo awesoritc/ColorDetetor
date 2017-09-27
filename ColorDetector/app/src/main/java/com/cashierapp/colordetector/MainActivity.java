@@ -16,6 +16,7 @@ import android.os.Bundle;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
 import android.view.View;
+import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.FrameLayout;
 import android.widget.ScrollView;
@@ -112,6 +113,8 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+        getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
+
 
         palette = (TextView) findViewById(R.id.color);
         result = (TextView) findViewById(R.id.result);
@@ -130,6 +133,8 @@ public class MainActivity extends AppCompatActivity {
                         mCam.release();
                         mCam = null;
                     }*/
+
+                    getWindow().clearFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
 
                     if(mHandler != null){
                         mHandler.removeCallbacksAndMessages(null);
@@ -155,6 +160,8 @@ public class MainActivity extends AppCompatActivity {
                     preview.setVisibility(View.GONE);
                     setting_btn.setVisibility(View.VISIBLE);
                 }else{
+
+                    getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
 
                     try {
                         mCam = Camera.open();
