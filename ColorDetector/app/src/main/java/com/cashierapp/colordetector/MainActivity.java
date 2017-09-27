@@ -79,6 +79,18 @@ public class MainActivity extends AppCompatActivity {
     private boolean use5points;
     private String format;
 
+    public void setValues(){
+        SharedPreferences preferences = getSharedPreferences("setting", MODE_PRIVATE);
+        filename = preferences.getString("filename_input", "filename");
+        border = preferences.getInt("border_input", 100);
+        interval = preferences.getInt("interval_input", 1000);
+        x_pos = preferences.getInt("x_pos_input", 100);
+        y_pos = preferences.getInt("y_pos_input", 100);
+        format = preferences.getString("format_input", "yyyy/MM/dd HH:mm:ss.SSS");
+
+        use5points = preferences.getBoolean("use5points_input", false);
+    }
+
 
 
 
@@ -347,17 +359,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
 
-    public void setValues(){
-        SharedPreferences preferences = getSharedPreferences("setting", MODE_PRIVATE);
-        filename = preferences.getString("filename_input", "filename");
-        border = preferences.getInt("border_input", 100);
-        interval = preferences.getInt("interval_input", 1000);
-        x_pos = preferences.getInt("x_pos_input", 100);
-        y_pos = preferences.getInt("y_pos_input", 100);
-        format = preferences.getString("format_input", "yyyy/MM/dd HH:mm:ss.SSS");
 
-        use5points = preferences.getBoolean("use5points_input", false);
-    }
 
 }
 
