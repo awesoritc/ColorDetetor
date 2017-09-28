@@ -73,8 +73,9 @@ public class MainActivity extends AppCompatActivity {
     private String filename;
     private int border;
     private int interval;
-    private int x_pos;
-    private int y_pos;
+    private int x_pos, x_area;
+    private int y_pos, y_area;
+    private boolean area_check = false;
     private boolean use5points;
     private String format;
 
@@ -86,6 +87,8 @@ public class MainActivity extends AppCompatActivity {
         interval = preferences.getInt("interval_input", 1000);
         x_pos = preferences.getInt("x_pos_input", 100);
         y_pos = preferences.getInt("y_pos_input", 100);
+        x_area = 40;
+        y_area = 40;
         format = preferences.getString("format_input", "yyyy/MM/dd HH:mm:ss.SSS");
 
         use5points = preferences.getBoolean("use5points_input", false);
@@ -306,6 +309,29 @@ public class MainActivity extends AppCompatActivity {
                 }else{
                     tmp = "255," + Util.getTimeStamp(format);
                 }
+            }else if(area_check){
+
+                int black_counter = 0;
+                int points_width = x_pos;
+                int points_height = y_pos;
+                for(int i = 0; i < x_area; i++){
+                    for(int j = 0; j < y_area; j++){
+                        int[] rgb = Util.getPixelGBR(pic, points_width, points_height);
+                        if(Util.colorChecker(rgb[0], rgb[1], rgb[2], border) == 0){
+                            black_counter++;
+                        }
+                        selected_color = rgb[3];
+
+                        points_height++;
+                    }
+                    points_width++;
+                }
+                if(black_counter > (x_area / 2)){
+                    tmp = "0," + Util.getTimeStamp(format);
+                }else{
+                    tmp = "255," + Util.getTimeStamp(format);
+                }
+
             }else{
                 //右上の１箇所だけのパターン
                 int[] rgb = Util.getPixelGBR(pic, x_pos, y_pos);
