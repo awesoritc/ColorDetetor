@@ -22,18 +22,6 @@
         android:id="@+id/preview"
         android:visibility="gone"/>
 
-    <!--<org.opencv.android.JavaCameraView
-        android:id="@+id/view"
-        android:layout_width="300dp"
-        android:layout_height="300dp"
-        app:show_fps="true"
-        app:camera_id="any"/>-->
-
-    <!--<TextureView
-        android:id="@+id/textureView"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content" />-->
-
 
     <Button
         android:id="@+id/start_btn"
@@ -48,19 +36,6 @@
         android:text="設定を変更する"
         android:visibility="visible"/>
 
-    <ScrollView
-        android:id="@+id/scrollView"
-        android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:layout_weight="1"
-        android:visibility="gone">
-        <TextView
-            android:id="@+id/result"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content" />
-
-
-    </ScrollView>
 
     <TextView
         android:id="@+id/recent_data"
@@ -69,12 +44,6 @@
         android:textSize="25sp"
         android:visibility="gone"/>
 
-    <!--<Button
-        android:id="@+id/display_file_btn"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="データを確認"
-        android:visibility="visible"/>-->
 
     <Button
         android:id="@+id/delete_btn"

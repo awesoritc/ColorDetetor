@@ -1,16 +1,12 @@
 package com.cashierapp.colordetector;
 
 import android.content.Context;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
-import android.graphics.Color;
 import android.hardware.Camera;
-import android.net.Uri;
 import android.os.Handler;
-import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
@@ -20,13 +16,8 @@ import android.view.View;
 import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.FrameLayout;
-import android.widget.ScrollView;
 import android.widget.TextView;
-import android.widget.Toast;
 
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
 import java.io.IOException;
 
 public class MainActivity extends AppCompatActivity {
@@ -82,7 +73,7 @@ public class MainActivity extends AppCompatActivity {
     public void setValues(){
         SharedPreferences preferences = getSharedPreferences("setting", MODE_PRIVATE);
         //filename = preferences.getString("filename_input", Util.getTimeStamp("yyyy/MM/dd HH:mm") + ".txt");
-        filename = Util.getTimeStamp("yyyy_MM_dd_HH_mm") + ".txt";
+        filename = Util.getTimeStamp("yyyy:MM:dd_HH:mm") + ".txt";
         border = preferences.getInt("border_input", 100);
         interval = preferences.getInt("interval_input", 1000);
         x_pos = preferences.getInt("x_pos_input", 100);
@@ -108,8 +99,7 @@ public class MainActivity extends AppCompatActivity {
 
     Handler mHandler;
     private boolean isRunning = false;
-    private Button delete_btn, display_file_btn, setting_btn;
-    private ScrollView scroll;
+    private Button setting_btn;
     FrameLayout preview;
 
     /** Called when the activity is first created. */
@@ -122,9 +112,7 @@ public class MainActivity extends AppCompatActivity {
 
 
         palette = (TextView) findViewById(R.id.color);
-        result = (TextView) findViewById(R.id.result);
         recent_data = (TextView) findViewById(R.id.recent_data);
-        scroll = (ScrollView) findViewById(R.id.scrollView);
         preview = (FrameLayout)findViewById(R.id.preview);
 
         setValues();
@@ -134,10 +122,7 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 if(isRunning){
-                    /*if (mCam != null) {
-                        mCam.release();
-                        mCam = null;
-                    }*/
+                    //止める
 
                     getWindow().clearFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
 
@@ -148,31 +133,22 @@ public class MainActivity extends AppCompatActivity {
                     isRunning = false;
                     btn.setText("start");
 
-                    /*AlertDialog.Builder builder = new AlertDialog.Builder(MainActivity.this);
-                    builder.setMessage("記録したデータを確認しますか");
-                    builder.setPositiveButton("はい", new DialogInterface.OnClickListener() {
-                        @Override
-                        public void onClick(DialogInterface dialogInterface, int i) {
-                            scroll.setVisibility(View.VISIBLE);
-                            result.setText(Util.readFile(MainActivity.this, filename));
-                        }
-                    });
-                    builder.setNegativeButton("いいえ", null);
-                    builder.create().show();*/
                     //止まってる時のもの
                     recent_data.setVisibility(View.GONE);
-                    //display_file_btn.setVisibility(View.VISIBLE);
                     preview.setVisibility(View.GONE);
-                    //setting_btn.setVisibility(View.VISIBLE);
                 }else{
+                    //動かす
 
                     getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
 
-                    try {
-                        mCam = Camera.open();
-                    }catch (Exception e){
-                        e.printStackTrace();
+                    if(mCam != null){
+                        try {
+                            mCam = Camera.open();
+                        }catch (Exception e){
+                            e.printStackTrace();
+                        }
                     }
+
 
                     // FrameLayout に CameraPreview クラスを設定
                     preview = (FrameLayout)findViewById(R.id.preview);
@@ -182,54 +158,19 @@ public class MainActivity extends AppCompatActivity {
 
 
                     mHandler = new Handler();
-                    mHandler.postDelayed(new Runnable() {
+                    mHandler.post(new Runnable() {
                         @Override
                         public void run() {
                             mCam.takePicture(null, null, mPicJpgListener);
                             mHandler.postDelayed(this, interval);
                         }
-                    }, 0);
+                    });
                     isRunning = true;
                     btn.setText("stop");
                     //動いている時のもの
-                    delete_btn.setVisibility(View.GONE);
                     recent_data.setVisibility(View.VISIBLE);
-                    scroll.setVisibility(View.GONE);
-                    //display_file_btn.setVisibility(View.GONE);
                     setting_btn.setVisibility(View.GONE);
                 }
-            }
-        });
-
-        /*display_file_btn = (Button) findViewById(R.id.display_file_btn);
-        display_file_btn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                scroll.setVisibility(View.VISIBLE);
-                result.setText(Util.readFile(MainActivity.this, filename));
-                display_file_btn.setVisibility(View.GONE);
-                delete_btn.setVisibility(View.VISIBLE);
-            }
-        });*/
-
-
-        delete_btn = (Button) findViewById(R.id.delete_btn);
-        delete_btn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                AlertDialog.Builder confirm = new AlertDialog.Builder(MainActivity.this);
-                confirm.setMessage("本当に削除してよろしいですか？");
-                confirm.setPositiveButton("はい", new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialogInterface, int i) {
-                        deleteFile(filename);
-                        Toast.makeText(MainActivity.this, "削除しました", Toast.LENGTH_SHORT).show();
-                        scroll.setVisibility(View.GONE);
-                        delete_btn.setVisibility(View.GONE);
-                    }
-                });
-                confirm.setNegativeButton("いいえ", null);
-                confirm.create().show();
             }
         });
 
@@ -242,19 +183,13 @@ public class MainActivity extends AppCompatActivity {
                 startActivityForResult(intent, 0);
             }
         });
+    }
 
+    @Override
+    protected void onResume() {
+        super.onResume();
 
-        // カメラインスタンスの取得
-        /*try {
-            mCam = Camera.open();
-        }catch (Exception e){
-            e.printStackTrace();
-        }
-
-        // FrameLayout に CameraPreview クラスを設定
-        FrameLayout preview = (FrameLayout)findViewById(R.id.image);
-        mCamPreview = new CameraPreview(this, mCam);
-        preview.addView(mCamPreview);*/
+        initializeCamera();
     }
 
     public void initializeCamera(){
@@ -342,13 +277,6 @@ public class MainActivity extends AppCompatActivity {
 
             //nullになりうる？
 
-
-            //Util.appendLog(MainActivity.this, "test1.txt", String.valueOf(color) + "\n");
-            //Toast.makeText(MainActivity.this, String.valueOf(color) + "\n" + Util.getTimeStamp(), Toast.LENGTH_SHORT).show();
-            ///Toast.makeText(MainActivity.this, String.valueOf(red) + "\n" + String.valueOf(green) + "\n" + String.valueOf(blue), Toast.LENGTH_SHORT).show();
-            //String tmp = String.valueOf(Util.colorChecker(rgb[0], rgb[1], rgb[2], border)) + "," + Util.getTimeStamp();
-            //Toast.makeText(MainActivity.this, String.valueOf(pic.getWidth()) + "\n" + String.valueOf(pic.getHeight()), Toast.LENGTH_SHORT).show();
-            //Toast.makeText(MainActivity.this, tmp, Toast.LENGTH_SHORT).show();
             recent_data.setText(tmp);
             Log.d(TAG, filename);
             Util.writeMsg(MainActivity.this, tmp +"\n", filename);
@@ -390,8 +318,6 @@ public class MainActivity extends AppCompatActivity {
 
         //変更した設定値を読み込み
         setValues();
-
-        delete_btn.setVisibility(View.GONE);
     }
 
 
@@ -445,7 +371,4 @@ class CameraPreview extends SurfaceView implements SurfaceHolder.Callback {
         // 画面回転に対応する場合は、ここでプレビューを停止し、
         // 回転による処理を実施、再度プレビューを開始する。
     }
-
-
-
 }
