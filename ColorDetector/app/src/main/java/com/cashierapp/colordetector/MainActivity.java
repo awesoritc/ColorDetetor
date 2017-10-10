@@ -17,12 +17,17 @@ import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.FrameLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import java.io.IOException;
+import java.io.PrintWriter;
+import java.io.StringWriter;
+import java.util.IllegalFormatConversionException;
 
 public class MainActivity extends AppCompatActivity {
 
     private final String TAG = "MainActivity";
+    private final String ERROR_INSTANCE = "e";
 
     //TODO:設定から戻ってきた時のcameraのエラーを削除
     //Camera is being used after Camera.release() was called
@@ -45,7 +50,7 @@ public class MainActivity extends AppCompatActivity {
     //1秒
     private final int interval = 1000;
 
-    //TODO:(1箇所だけの色をとる場合)色をとる位置(横:右から左に0~2559, 縦:上から下に0~1919)
+    //TODO:(1箇所だけの色をとる場合)色をとる位置(縦:上から下に0~2559, 横:右から左に0~1919)
     //右上
     private final int x_pos = 100;
     private final int y_pos = 100;
@@ -76,8 +81,8 @@ public class MainActivity extends AppCompatActivity {
         filename = Util.getTimeStamp("yyyy:MM:dd_HH:mm") + ".txt";
         border = preferences.getInt("border_input", 100);
         interval = preferences.getInt("interval_input", 1000);
-        x_pos = preferences.getInt("x_pos_input", 100);
-        y_pos = preferences.getInt("y_pos_input", 100);
+        x_pos = preferences.getInt("x_pos_input", 100);//(上から下に0~2560)
+        y_pos = preferences.getInt("y_pos_input", 100);//(右から左に0~1920)
         x_area = 40;
         y_area = 40;
         format = preferences.getString("format_input", "yyyy/MM/dd HH:mm:ss.SSS");
@@ -99,12 +104,12 @@ public class MainActivity extends AppCompatActivity {
 
     Handler mHandler;
     private boolean isRunning = false;
-    private Button setting_btn;
+    private Button setting_btn, error_btn;
     FrameLayout preview;
 
     /** Called when the activity is first created. */
     @Override
-    public void onCreate(Bundle savedInstanceState) {
+    public void onCreate(final Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
@@ -114,6 +119,13 @@ public class MainActivity extends AppCompatActivity {
         palette = (TextView) findViewById(R.id.color);
         recent_data = (TextView) findViewById(R.id.recent_data);
         preview = (FrameLayout)findViewById(R.id.preview);
+
+
+
+        //予想しないExceptionを処理
+        MyUncaughtExceptionHandler myUncaughtExceptionHandler = new MyUncaughtExceptionHandler(this);
+        Thread.setDefaultUncaughtExceptionHandler(myUncaughtExceptionHandler);
+
 
         setValues();
 
@@ -170,6 +182,7 @@ public class MainActivity extends AppCompatActivity {
                     //動いている時のもの
                     recent_data.setVisibility(View.VISIBLE);
                     setting_btn.setVisibility(View.GONE);
+                    error_btn.setVisibility(View.GONE);
                 }
             }
         });
@@ -181,8 +194,26 @@ public class MainActivity extends AppCompatActivity {
             public void onClick(View view) {
                 Intent intent = new Intent(MainActivity.this, SettingActivity.class);
                 startActivityForResult(intent, 0);
+                throw new IllegalStateException();
             }
         });
+
+        error_btn = (Button) findViewById(R.id.error_btn);
+        final SharedPreferences pref = getSharedPreferences("error", MODE_PRIVATE);
+        final String errormsg = pref.getString("error", ERROR_INSTANCE);
+        String day = Util.getTimeStamp("yyyy:MM:dd_HH:mm");
+        final String m = day + ".txt";
+        if(!errormsg.equals(ERROR_INSTANCE)){
+            error_btn.setVisibility(View.VISIBLE);
+            error_btn.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    Util.writeErrorMsg(MainActivity.this, errormsg, m/*"error_msg.txt"*/);
+                    pref.edit().putString("error", ERROR_INSTANCE).commit();
+                    error_btn.setVisibility(View.GONE);
+                }
+            });
+        }
     }
 
     @Override
@@ -226,6 +257,10 @@ public class MainActivity extends AppCompatActivity {
             int selected_color = 0;
             if(use5points){
                 //5箇所をとるパターン
+
+                //int[] points_width = {100, 100, 2460, 2460, 1230};
+                //int[] points_height = {100, 1820, 100, 1820, 960};
+
                 int[] points_width = {100, 100, 2460, 2460, 1230};
                 int[] points_height = {100, 1820, 100, 1820, 960};
 
@@ -239,7 +274,7 @@ public class MainActivity extends AppCompatActivity {
                     selected_color = rgb[3];
 
                 }
-                if(black_counter > 3){
+                if(black_counter >= 3){
                     tmp = "0," + Util.getTimeStamp(format);
                 }else{
                     tmp = "255," + Util.getTimeStamp(format);
@@ -273,6 +308,8 @@ public class MainActivity extends AppCompatActivity {
                 tmp = Util.colorChecker(rgb[0], rgb[1], rgb[2], border) + "," + Util.getTimeStamp(format);
                 selected_color = rgb[3];
             }
+
+            pic = null;
 
 
             //nullになりうる？

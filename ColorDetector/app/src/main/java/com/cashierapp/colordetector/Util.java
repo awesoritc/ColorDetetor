@@ -79,6 +79,39 @@ public class Util {
     }
 
 
+    public static void writeErrorMsg(Context context, String msg, String filename){
+
+
+        String state = Environment.getExternalStorageState();
+        if (Environment.MEDIA_MOUNTED.equals(state)) { //マウントされているか
+
+            String mydirName = "ColorData_Error";
+            File myDir = new File(Environment.getExternalStorageDirectory(), mydirName);
+            if (!myDir.exists()) { //MyDirectoryというディレクトリーがなかったら作成
+                myDir.mkdirs();
+            }
+
+
+            File saveFile = new File(myDir, filename);
+            try {
+                FileOutputStream outputStream = new FileOutputStream(saveFile, true);
+                outputStream.write(msg.getBytes());
+                outputStream.close();
+                Toast.makeText(context, "多分書き込めました", Toast.LENGTH_SHORT).show();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+
+
+
+        } else if (Environment.MEDIA_MOUNTED_READ_ONLY.equals(state)) { //読み取りのみか（書き込み不可）
+
+            Toast.makeText(context, "書き込み不可", Toast.LENGTH_SHORT).show();
+        }
+
+    }
+
+
 
     public static boolean isExternalStorageWritable() {
         String state = Environment.getExternalStorageState();
