@@ -194,7 +194,6 @@ public class MainActivity extends AppCompatActivity {
             public void onClick(View view) {
                 Intent intent = new Intent(MainActivity.this, SettingActivity.class);
                 startActivityForResult(intent, 0);
-                throw new IllegalStateException();
             }
         });
 
