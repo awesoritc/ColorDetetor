@@ -96,7 +96,9 @@ public class MainActivity extends AppCompatActivity {
 
     // カメラインスタンス
     private Camera mCam = null;
-    private Bitmap pic;
+    private Bitmap[] pic;
+    private int pic_counter;
+    private final int PIC_NUM = 3;
     private TextView palette, result, recent_data;
 
     // カメラプレビュークラス
@@ -119,6 +121,8 @@ public class MainActivity extends AppCompatActivity {
         palette = (TextView) findViewById(R.id.color);
         recent_data = (TextView) findViewById(R.id.recent_data);
         preview = (FrameLayout)findViewById(R.id.preview);
+        pic = new Bitmap[PIC_NUM];
+        pic_counter = 0;
 
 
 
@@ -153,13 +157,13 @@ public class MainActivity extends AppCompatActivity {
 
                     getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
 
-                    if(mCam != null){
+                    /*if(mCam != null){
                         try {
                             mCam = Camera.open();
                         }catch (Exception e){
                             e.printStackTrace();
                         }
-                    }
+                    }*/
 
 
                     // FrameLayout に CameraPreview クラスを設定
@@ -225,6 +229,11 @@ public class MainActivity extends AppCompatActivity {
     public void initializeCamera(){
         try {
             mCam = Camera.open();
+
+            /*Camera.Parameters parameters = mCam.getParameters();
+            parameters.setFlashMode(Camera.Parameters.FLASH_MODE_TORCH);
+            mCam.setParameters(parameters);*/
+
         }catch (Exception e){
             e.printStackTrace();
         }
@@ -244,7 +253,8 @@ public class MainActivity extends AppCompatActivity {
                 return;
             }
 
-            pic = BitmapFactory.decodeByteArray(data, 0, data.length);//width:2560, height:1920
+
+            pic[pic_counter%PIC_NUM] = BitmapFactory.decodeByteArray(data, 0, data.length);//width:2560, height:1920
             /*int color = pic.getPixel(100, 100);
             int red = Color.red(color);
             int green = Color.green(color);
@@ -266,7 +276,7 @@ public class MainActivity extends AppCompatActivity {
 
                 int black_counter = 0;
                 for(int i = 0; i < 5; i++){
-                    int[] rgb = Util.getPixelGBR(pic, points_width[i], points_height[i]);
+                    int[] rgb = Util.getPixelGBR(pic[pic_counter%PIC_NUM], points_width[i], points_height[i]);
                     if(Util.colorChecker(rgb[0], rgb[1], rgb[2], border) == 0){
                         black_counter++;
                     }
@@ -285,11 +295,11 @@ public class MainActivity extends AppCompatActivity {
                 int points_height = y_pos;
                 for(int i = 0; i < x_area; i++){
                     for(int j = 0; j < y_area; j++){
-                        int[] rgb = Util.getPixelGBR(pic, points_width, points_height);
+                        int[] rgb = Util.getPixelGBR(pic[pic_counter%PIC_NUM], points_width, points_height);
                         if(Util.colorChecker(rgb[0], rgb[1], rgb[2], border) == 0){
                             black_counter++;
                         }
-                        selected_color = rgb[3];
+                        selected_color = rgb[PIC_NUM];
 
                         points_height++;
                     }
@@ -303,12 +313,13 @@ public class MainActivity extends AppCompatActivity {
 
             }else{
                 //右上の１箇所だけのパターン
-                int[] rgb = Util.getPixelGBR(pic, x_pos, y_pos);
+                int[] rgb = Util.getPixelGBR(pic[pic_counter%PIC_NUM], x_pos, y_pos);
                 tmp = Util.colorChecker(rgb[0], rgb[1], rgb[2], border) + "," + Util.getTimeStamp(format);
                 selected_color = rgb[3];
             }
 
-            pic = null;
+            pic[pic_counter%PIC_NUM] = null;
+            pic_counter++;
 
 
             //nullになりうる？
