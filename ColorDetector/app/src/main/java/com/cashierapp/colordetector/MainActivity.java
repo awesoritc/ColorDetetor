@@ -269,6 +269,8 @@ public class MainActivity extends AppCompatActivity {
 
             String tmp = "";
             int selected_color = 0;
+            current_rgb_log = "";
+
             if(use5points){
                 //5箇所をとるパターン
 
@@ -282,6 +284,12 @@ public class MainActivity extends AppCompatActivity {
                 int black_counter = 0;
                 for(int i = 0; i < 5; i++){
                     int[] rgb = Util.getPixelGBR(pic[pic_counter%PIC_NUM], points_width[i], points_height[i]);
+                    if(i == 4){
+                        current_rgb_log += "(" + String.valueOf(rgb[0]) + ":" +String.valueOf(rgb[1]) + ":" + String.valueOf(rgb[2]) + ")";//RGBの巡
+                    }else{
+                        current_rgb_log += "(" + String.valueOf(rgb[0]) + ":" +String.valueOf(rgb[1]) + ":" + String.valueOf(rgb[2]) + "),";//RGBの巡
+                    }
+
                     if(Util.colorChecker(rgb[0], rgb[1], rgb[2], border) == 0){
                         black_counter++;
                     }
@@ -301,7 +309,6 @@ public class MainActivity extends AppCompatActivity {
                 for(int i = 0; i < x_area; i++){
                     for(int j = 0; j < y_area; j++){
                         int[] rgb = Util.getPixelGBR(pic[pic_counter%PIC_NUM], points_width, points_height);
-                        current_rgb_log = String.valueOf(rgb[0]) + "," +String.valueOf(rgb[1]) + "," + String.valueOf(rgb[2]);//RGBの巡
                         if(Util.colorChecker(rgb[0], rgb[1], rgb[2], border) == 0){
                             black_counter++;
                         }
@@ -320,6 +327,7 @@ public class MainActivity extends AppCompatActivity {
             }else{
                 //右上の１箇所だけのパターン
                 int[] rgb = Util.getPixelGBR(pic[pic_counter%PIC_NUM], x_pos, y_pos);
+                current_rgb_log = "(" + String.valueOf(rgb[0]) + ":" +String.valueOf(rgb[1]) + ":" + String.valueOf(rgb[2]) + "),";//RGBの巡
                 tmp = Util.colorChecker(rgb[0], rgb[1], rgb[2], border) + "," + Util.getTimeStamp(format);
                 selected_color = rgb[3];
             }
