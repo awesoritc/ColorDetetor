@@ -13,101 +13,115 @@
             android:layout_height="match_parent"
             android:orientation="vertical">
 
-    <!--<TextView
-        android:id="@+id/filename_set"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="ファイル名"
-        android:textSize="20sp"/>
+            <!--<TextView
+                android:id="@+id/filename_set"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="ファイル名"
+                android:textSize="20sp"/>
 
-    <EditText
-        android:id="@+id/filename_input"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:ems="15"
-        android:inputType="textPersonName" />-->
+            <EditText
+                android:id="@+id/filename_input"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:ems="15"
+                android:inputType="textPersonName" />-->
 
-    <TextView
-        android:id="@+id/border_set"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="白黒の境界値(0~255)"
-        android:textSize="20sp"/>
+            <TextView
+                android:id="@+id/border_set"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="白黒の境界値(0~255)"
+                android:textSize="20sp"/>
 
-    <EditText
-        android:id="@+id/border_input"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:ems="3"
-        android:inputType="number" />
+            <EditText
+                android:id="@+id/border_input"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:ems="3"
+                android:inputType="number" />
 
-    <TextView
-        android:id="@+id/interval_set"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="シャッター間隔を指定(ミリ秒)"
-        android:textSize="20sp"/>
+            <TextView
+                android:id="@+id/interval_set"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="シャッター間隔を指定(ミリ秒)"
+                android:textSize="20sp"/>
 
-    <EditText
-        android:id="@+id/interval_input"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:ems="5"
-        android:inputType="number" />
+            <EditText
+                android:id="@+id/interval_input"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:ems="5"
+                android:inputType="number" />
 
-    <TextView
-        android:id="@+id/x_pos_set"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="x座標(横:右から左に0~2559)"
-        android:textSize="20sp"/>
+            <TextView
+                android:id="@+id/x_pos_set"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="x座標(横:右から左に0~2559)"
+                android:textSize="20sp"/>
 
-    <EditText
-        android:id="@+id/x_pos_input"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:ems="4"
-        android:inputType="number" />
+            <EditText
+                android:id="@+id/x_pos_input"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:ems="4"
+                android:inputType="number" />
 
-    <TextView
-        android:id="@+id/y_pos_set"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="y座標(上から下に0~1919)"
-        android:textSize="20sp"/>
+            <TextView
+                android:id="@+id/y_pos_set"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="y座標(上から下に0~1919)"
+                android:textSize="20sp"/>
 
-    <EditText
-        android:id="@+id/y_pos_input"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:ems="4"
-        android:inputType="number" />
+            <EditText
+                android:id="@+id/y_pos_input"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:ems="4"
+                android:inputType="number" />
 
-    <TextView
-        android:id="@+id/use5points_set"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="5つの地点の色を使う"
-        android:textSize="20sp"/>
+            <TextView
+                android:id="@+id/use5points_set"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="5つの地点の色を使う"
+                android:textSize="20sp"/>
 
-    <Switch
-        android:id="@+id/use5points_input"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content" />
+            <Switch
+                android:id="@+id/use5points_input"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content" />
 
-    <TextView
-        android:id="@+id/format_set"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="フォーマット"
-        android:textSize="20sp"/>
 
-    <EditText
-        android:id="@+id/format_input"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:ems="25"
-        android:inputType="textPersonName" />
+            <TextView
+                android:id="@+id/print_rgb_set"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="5つの地点の色を使う"
+                android:textSize="20sp"/>
+
+
+            <Switch
+                android:id="@+id/print_rgb_input"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content" />
+
+            <TextView
+                android:id="@+id/format_set"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="フォーマット"
+                android:textSize="20sp"/>
+
+            <EditText
+                android:id="@+id/format_input"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:ems="25"
+                android:inputType="textPersonName" />
 
         </LinearLayout>
 

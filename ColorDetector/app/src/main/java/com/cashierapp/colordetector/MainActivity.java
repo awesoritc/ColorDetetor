@@ -72,8 +72,11 @@ public class MainActivity extends AppCompatActivity {
     private int x_pos, x_area;
     private int y_pos, y_area;
     private boolean area_check = false;
-    private boolean use5points;
+    //use5points:5点での色判断を行う場合にtrue
+    //printRGB:RGBの値をログに出力する場合にtrue
+    private boolean use5points, printRGB;
     private String format;
+    private String current_rgb_log = "";
 
     public void setValues(){
         SharedPreferences preferences = getSharedPreferences("setting", MODE_PRIVATE);
@@ -88,6 +91,8 @@ public class MainActivity extends AppCompatActivity {
         format = preferences.getString("format_input", "yyyy/MM/dd HH:mm:ss.SSS");
 
         use5points = preferences.getBoolean("use5points_input", false);
+
+        printRGB = preferences.getBoolean("printRGB", false);
     }
 
 
@@ -296,6 +301,7 @@ public class MainActivity extends AppCompatActivity {
                 for(int i = 0; i < x_area; i++){
                     for(int j = 0; j < y_area; j++){
                         int[] rgb = Util.getPixelGBR(pic[pic_counter%PIC_NUM], points_width, points_height);
+                        current_rgb_log = String.valueOf(rgb[0]) + "," +String.valueOf(rgb[1]) + "," + String.valueOf(rgb[2]);//RGBの巡
                         if(Util.colorChecker(rgb[0], rgb[1], rgb[2], border) == 0){
                             black_counter++;
                         }
@@ -326,7 +332,14 @@ public class MainActivity extends AppCompatActivity {
 
             recent_data.setText(tmp);
             Log.d(TAG, filename);
-            Util.writeMsg(MainActivity.this, tmp +"\n", filename);
+            if(printRGB){
+                //RGBの値をログに出力
+                Util.writeMsg(MainActivity.this, tmp + "," + current_rgb_log + "\n", filename);
+            }else{
+                //普通のログを出力
+                Util.writeMsg(MainActivity.this, tmp + "\n", filename);
+            }
+
             palette.setBackgroundColor(selected_color);
 
 

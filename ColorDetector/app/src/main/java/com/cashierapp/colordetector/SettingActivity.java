@@ -15,9 +15,9 @@ import android.widget.Switch;
 
 public class SettingActivity extends AppCompatActivity {
 
-    EditText filename_input, border_input, interval_input, x_pos_input, y_pos_input, format_input;
-    Switch use5points_input;
-    int resultCode = 0;
+    private EditText filename_input, border_input, interval_input, x_pos_input, y_pos_input, format_input;
+    private Switch use5points_input, printRGB;
+    private int resultCode = 0;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -32,6 +32,7 @@ public class SettingActivity extends AppCompatActivity {
         format_input = (EditText) findViewById(R.id.format_input);
 
         use5points_input = (Switch) findViewById(R.id.use5points_input);
+        printRGB = (Switch) findViewById(R.id.print_rgb_input);
 
 
         final SharedPreferences preferences = getSharedPreferences("setting", MODE_PRIVATE);
@@ -42,11 +43,20 @@ public class SettingActivity extends AppCompatActivity {
         y_pos_input.setText(String.valueOf(preferences.getInt("y_pos_input", 100)));
         format_input.setText(preferences.getString("format_input", "yyyy/MM/dd HH:mm:ss.SSS"));
 
+
+
         use5points_input.setChecked(preferences.getBoolean("use5points_input", false));
         if(use5points_input.isChecked()){
             use5points_input.setText("使う");
         }else{
             use5points_input.setText("使わない");
+        }
+
+        printRGB.setChecked(preferences.getBoolean("printRGB", false));
+        if(use5points_input.isChecked()){
+            use5points_input.setText("する");
+        }else{
+            use5points_input.setText("しない");
         }
 
         Button done_btn = (Button) findViewById(R.id.done_btn);
@@ -62,6 +72,7 @@ public class SettingActivity extends AppCompatActivity {
                 editor.putString("format_input", format_input.getText().toString());
 
                 editor.putBoolean("use5points_input", use5points_input.isChecked());
+                editor.putBoolean("printRGB", printRGB.isChecked());
 
                 editor.commit();
 
