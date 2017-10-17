@@ -327,7 +327,7 @@ public class MainActivity extends AppCompatActivity {
             }else{
                 //右上の１箇所だけのパターン
                 int[] rgb = Util.getPixelGBR(pic[pic_counter%PIC_NUM], x_pos, y_pos);
-                current_rgb_log = "(" + String.valueOf(rgb[0]) + ":" +String.valueOf(rgb[1]) + ":" + String.valueOf(rgb[2]) + "),";//RGBの巡
+                current_rgb_log = "(" + String.valueOf(rgb[0]) + ":" +String.valueOf(rgb[1]) + ":" + String.valueOf(rgb[2]) + ")";//RGBの巡
                 tmp = Util.colorChecker(rgb[0], rgb[1], rgb[2], border) + "," + Util.getTimeStamp(format);
                 selected_color = rgb[3];
             }
