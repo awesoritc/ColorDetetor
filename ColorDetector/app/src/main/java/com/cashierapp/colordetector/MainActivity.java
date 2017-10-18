@@ -69,7 +69,6 @@ public class MainActivity extends AppCompatActivity {
     private int interval;
     private int x_pos, x_area;
     private int y_pos, y_area;
-    private boolean area_check = false;
     //use5points:5点での色判断を行う場合にtrue
     //printRGB:RGBの値をログに出力する場合にtrue
     private boolean use5points, printRGB, randomPoints;
@@ -229,6 +228,9 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
+
+
+
     @Override
     protected void onResume() {
         super.onResume();
@@ -340,29 +342,6 @@ public class MainActivity extends AppCompatActivity {
                 }else{
                     tmp = "255," + Util.getTimeStamp(format);
                 }
-            }else if(area_check){
-
-                int black_counter = 0;
-                int points_width = x_pos;
-                int points_height = y_pos;
-                for(int i = 0; i < x_area; i++){
-                    for(int j = 0; j < y_area; j++){
-                        int[] rgb = Util.getPixelGBR(pic[pic_counter%PIC_NUM], points_width, points_height);
-                        if(Util.colorChecker(rgb[0], rgb[1], rgb[2], border) == 0){
-                            black_counter++;
-                        }
-                        selected_color = rgb[PIC_NUM];
-
-                        points_height++;
-                    }
-                    points_width++;
-                }
-                if(black_counter > (x_area / 2)){
-                    tmp = "0," + Util.getTimeStamp(format);
-                }else{
-                    tmp = "255," + Util.getTimeStamp(format);
-                }
-
             }else{
                 //右上の１箇所だけのパターン
                 int[] rgb = Util.getPixelGBR(pic[pic_counter%PIC_NUM], x_pos, y_pos);
