@@ -59,33 +59,5 @@ public class MyUncaughtExceptionHandler implements Thread.UncaughtExceptionHandl
 
         SharedPreferences preferences = context.getSharedPreferences("error", Context.MODE_PRIVATE);
         preferences.edit().putString("error", msg).commit();
-
-
-
-        /*String state = Environment.getExternalStorageState();
-        if (Environment.MEDIA_MOUNTED.equals(state)) { //マウントされているか
-
-            String mydirName = "ColorData_Error";
-            File myDir = new File(Environment.getExternalStorageDirectory(), mydirName);
-            if (!myDir.exists()) { //MyDirectoryというディレクトリーがなかったら作成
-                myDir.mkdirs();
-            }
-
-
-
-
-            File saveFile = new File(myDir, filename);
-            try {
-                FileOutputStream outputStream = new FileOutputStream(saveFile, true);
-                outputStream.write(msg.getBytes());
-                outputStream.close();
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-
-        } else if (Environment.MEDIA_MOUNTED_READ_ONLY.equals(state)) { //読み取りのみか（書き込み不可）
-
-            Toast.makeText(context, "書き込み不可", Toast.LENGTH_SHORT).show();
-        }*/
     }
 }

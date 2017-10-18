@@ -20,16 +20,14 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import java.io.IOException;
-import java.io.PrintWriter;
-import java.io.StringWriter;
-import java.util.IllegalFormatConversionException;
+import java.util.Random;
 
 public class MainActivity extends AppCompatActivity {
 
     private final String TAG = "MainActivity";
     private final String ERROR_INSTANCE = "e";
 
-    //TODO:設定から戻ってきた時のcameraのエラーを削除
+    //StringBuilderを使ってまとめてからファイルに書き出し
     //Camera is being used after Camera.release() was called
 
 
@@ -74,7 +72,7 @@ public class MainActivity extends AppCompatActivity {
     private boolean area_check = false;
     //use5points:5点での色判断を行う場合にtrue
     //printRGB:RGBの値をログに出力する場合にtrue
-    private boolean use5points, printRGB;
+    private boolean use5points, printRGB, randomPoints;
     private String format;
     private String current_rgb_log = "";
 
@@ -92,7 +90,9 @@ public class MainActivity extends AppCompatActivity {
 
         use5points = preferences.getBoolean("use5points_input", false);
 
-        printRGB = preferences.getBoolean("printRGB", false);
+        printRGB = preferences.getBoolean("printRGB_input", false);
+
+        randomPoints = preferences.getBoolean("randomPoints_input", false);
     }
 
 
@@ -109,10 +109,13 @@ public class MainActivity extends AppCompatActivity {
     // カメラプレビュークラス
     private CameraPreview mCamPreview = null;
 
-    Handler mHandler;
+    private Handler mHandler;
     private boolean isRunning = false;
     private Button setting_btn, error_btn;
-    FrameLayout preview;
+    private FrameLayout preview;
+
+    /*private StringBuilder builder;
+    private int log_counter = 0;*/
 
     /** Called when the activity is first created. */
     @Override
@@ -128,6 +131,8 @@ public class MainActivity extends AppCompatActivity {
         preview = (FrameLayout)findViewById(R.id.preview);
         pic = new Bitmap[PIC_NUM];
         pic_counter = 0;
+        //LOGTAG
+        /*builder = new StringBuilder();*/
 
 
 
@@ -234,6 +239,13 @@ public class MainActivity extends AppCompatActivity {
     public void initializeCamera(){
         try {
             mCam = Camera.open();
+            Camera.Parameters parameters = mCam.getParameters();
+            if(parameters.isVideoStabilizationSupported()){
+                parameters.setVideoStabilization(false);
+            }
+
+            //TODO:調子が悪ければオートフォーカスをonに
+            parameters.setFocusMode(Camera.Parameters.FOCUS_MODE_FIXED);
 
             /*Camera.Parameters parameters = mCam.getParameters();
             parameters.setFlashMode(Camera.Parameters.FLASH_MODE_TORCH);
@@ -279,6 +291,33 @@ public class MainActivity extends AppCompatActivity {
 
                 int[] points_width = {100, 100, 2460, 2460, 1230};
                 int[] points_height = {100, 1820, 100, 1820, 960};
+
+                if(randomPoints){
+                    //範囲内でランダムな5箇所を取得
+
+                    //b <= x < (b+a)
+                    Random random = new Random();
+                    for(int i = 0; i < 5; i++){
+                        points_width[i] = random.nextInt(500/*取りうる範囲(a)*/) + 100;/*最小の値(b)*/
+                    }
+                    for(int i = 0; i < 5; i++){
+                        points_height[i] = random.nextInt(500/*取りうる範囲(a)*/) + 100;/*最小の値(b)*/
+                    }
+
+                    //確認の出力をします。必要ないなら消してください(下のコメントまで)
+                    String con_tmp = Util.getTimeStamp(format);
+                    for (int i = 0; i < 5; i++) {
+                        if(i != 4){
+                            con_tmp += "(" + points_width[i] + ":" + points_height[i] + "),";
+                        }else{
+                            con_tmp += "(" + points_width[i] + ":" + points_height[i] + ")";
+                        }
+
+                    }
+                    Util.writeMsg(MainActivity.this, con_tmp + "\n", "confirm.txt");
+                    //ここまで
+                }
+
 
 
                 int black_counter = 0;
@@ -340,13 +379,41 @@ public class MainActivity extends AppCompatActivity {
 
             recent_data.setText(tmp);
             Log.d(TAG, filename);
+
+            //毎回出力せずにまとめてから出力する
             if(printRGB){
                 //RGBの値をログに出力
                 Util.writeMsg(MainActivity.this, tmp + "," + current_rgb_log + "\n", filename);
+
+                /*ログの書き出しをまとめて行う
+                //LOGTAG
+                String a = tmp + "," + current_rgb_log + "\n";
+                builder.append(a);*/
             }else{
                 //普通のログを出力
                 Util.writeMsg(MainActivity.this, tmp + "\n", filename);
+
+                //LOGTAG
+                /*String b = tmp + "\n";
+                builder.append(b);*/
             }
+
+
+
+            //LOGTAG
+            /*if(log_counter > 100){
+                if(printRGB){
+                    //RGBの値をログに出力
+                    Util.writeMsg(MainActivity.this, builder.toString(), filename);
+                }else{
+                    //普通のログを出力
+                    Util.writeMsg(MainActivity.this, builder.toString(), filename);
+                }
+                builder.setLength(0);
+                log_counter = 0;
+            }else{
+                log_counter++;
+            }*/
 
             palette.setBackgroundColor(selected_color);
 
@@ -362,6 +429,21 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onPause() {
         super.onPause();
+
+        //止めた時にログ出力される用にする
+        //LOGTAG
+        /*if(builder.length() != 0){
+            if(printRGB){
+                //RGBの値をログに出力
+                Util.writeMsg(MainActivity.this, builder.toString(), filename);
+            }else{
+                //普通のログを出力
+                Util.writeMsg(MainActivity.this, builder.toString(), filename);
+            }
+            builder.setLength(0);
+            log_counter = 0;
+        }*/
+
 
         if(mHandler != null){
             mHandler.removeCallbacksAndMessages(null);

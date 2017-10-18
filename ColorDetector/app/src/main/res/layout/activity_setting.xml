@@ -97,6 +97,20 @@
 
 
             <TextView
+                android:id="@+id/random_points_set"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="ランダムな地点を利用する"
+                android:textSize="20sp"/>
+
+
+            <Switch
+                android:id="@+id/random_points_input"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content" />
+
+
+            <TextView
                 android:id="@+id/print_rgb_set"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"

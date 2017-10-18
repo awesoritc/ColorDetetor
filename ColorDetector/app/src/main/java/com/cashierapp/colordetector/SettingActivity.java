@@ -6,6 +6,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.view.KeyEvent;
 import android.view.View;
 import android.widget.Button;
+import android.widget.CompoundButton;
 import android.widget.EditText;
 import android.widget.Switch;
 
@@ -16,7 +17,7 @@ import android.widget.Switch;
 public class SettingActivity extends AppCompatActivity {
 
     private EditText filename_input, border_input, interval_input, x_pos_input, y_pos_input, format_input;
-    private Switch use5points_input, printRGB;
+    private Switch use5points_input, printRGB_input, randomPoints_input;
     private int resultCode = 0;
 
     @Override
@@ -32,7 +33,8 @@ public class SettingActivity extends AppCompatActivity {
         format_input = (EditText) findViewById(R.id.format_input);
 
         use5points_input = (Switch) findViewById(R.id.use5points_input);
-        printRGB = (Switch) findViewById(R.id.print_rgb_input);
+        printRGB_input = (Switch) findViewById(R.id.print_rgb_input);
+        randomPoints_input = (Switch) findViewById(R.id.random_points_input);
 
 
         final SharedPreferences preferences = getSharedPreferences("setting", MODE_PRIVATE);
@@ -52,12 +54,53 @@ public class SettingActivity extends AppCompatActivity {
             use5points_input.setText("使わない");
         }
 
-        printRGB.setChecked(preferences.getBoolean("printRGB", false));
-        if(use5points_input.isChecked()){
-            use5points_input.setText("する");
+        use5points_input.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                if(use5points_input.isChecked()){
+                    use5points_input.setText("使う");
+                }else{
+                    use5points_input.setText("使わない");
+                }
+            }
+        });
+
+        printRGB_input.setChecked(preferences.getBoolean("printRGB_input", false));
+        if(printRGB_input.isChecked()){
+            printRGB_input.setText("する");
         }else{
-            use5points_input.setText("しない");
+            printRGB_input.setText("しない");
         }
+
+        printRGB_input.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if(printRGB_input.isChecked()){
+                    printRGB_input.setText("する");
+                }else{
+                    printRGB_input.setText("しない");
+                }
+            }
+        });
+
+
+        randomPoints_input.setChecked(preferences.getBoolean("randomPoints_input", false));
+        if(randomPoints_input.isChecked()){
+            randomPoints_input.setText("する");
+        }else{
+            randomPoints_input.setText("しない");
+        }
+
+        randomPoints_input.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if(randomPoints_input.isChecked()){
+                    randomPoints_input.setText("する");
+                }else{
+                    randomPoints_input.setText("しない");
+                }
+            }
+        });
 
         Button done_btn = (Button) findViewById(R.id.done_btn);
         done_btn.setOnClickListener(new View.OnClickListener() {
@@ -72,7 +115,8 @@ public class SettingActivity extends AppCompatActivity {
                 editor.putString("format_input", format_input.getText().toString());
 
                 editor.putBoolean("use5points_input", use5points_input.isChecked());
-                editor.putBoolean("printRGB", printRGB.isChecked());
+                editor.putBoolean("printRGB_input", printRGB_input.isChecked());
+                editor.putBoolean("randomPoints_input", randomPoints_input.isChecked());
 
                 editor.commit();
 
